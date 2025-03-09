@@ -1,0 +1,504 @@
+:root {
+  /* ACCE-inspired color palette */
+  --bg-color: #ffffff;
+  --primary-color: #000000;
+  --secondary-color: #666666;
+  --active-color: #333333;
+  --paused-color: #808080;
+  --idle-color: #f0f0f0;
+  --text-color: #222222;
+  --light-text: #999999;
+  --border-radius: 0px;
+  --button-shadow: none;
+  --button-shadow-hover: 0 5px 15px -3px rgba(0, 0, 0, 0.1);
+  --transition-speed: 0.3s;
+  --border-color: #e0e0e0;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.01em;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  padding: 2.5rem 0 2.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.date-time-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.current-date {
+  font-weight: 300;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  color: var(--secondary-color);
+}
+
+.current-time {
+  font-weight: 400;
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  color: var(--primary-color);
+  margin-top: 0.25rem;
+}
+
+h1 {
+  font-weight: 300;
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin: 0;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.controls {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.control-button {
+  background: white;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+}
+
+.clear-button {
+  color: #999;
+}
+
+.control-button:hover {
+  border-color: var(--secondary-color);
+  color: var(--primary-color);
+}
+
+.timer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  flex: 1;
+  padding: 0 1rem;
+}
+
+.timer-button {
+  position: relative;
+  height: 200px;
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: all var(--transition-speed) ease;
+  cursor: pointer;
+  padding: 0;
+  overflow: hidden;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+.timer-button:hover {
+  border-color: var(--secondary-color);
+  box-shadow: var(--button-shadow-hover);
+}
+
+.timer-button.active {
+  background-color: var(--active-color);
+  color: white;
+  border-color: var(--active-color);
+}
+
+.timer-button.paused {
+  background-color: white;
+  border-color: var(--paused-color);
+  border-width: 2px;
+  color: var(--paused-color);
+}
+
+.timer-content {
+  padding: 1.75rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+.job-info {
+  margin-bottom: 0.75rem;
+}
+
+.job-number {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--secondary-color);
+  margin-bottom: 0.3rem;
+  letter-spacing: 0.02em;
+}
+
+.job-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.job-time {
+  font-size: 2.25rem;
+  font-weight: 300;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: 0.02em;
+  margin: 1rem 0;
+}
+
+.timer-status {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: auto;
+  opacity: 0.8;
+}
+
+.timer-button.active .timer-status {
+  opacity: 1;
+  font-weight: 500;
+}
+
+.timer-button::before {
+  content: "";
+  position: absolute;
+  height: 1px;
+  top: 0;
+  left: 1.75rem;
+  right: 1.75rem;
+  background: var(--border-color);
+  opacity: 0;
+  transition: opacity var(--transition-speed) ease;
+}
+
+.timer-button.active::before {
+  opacity: 0;
+}
+
+.timer-button.paused::before {
+  opacity: 1;
+  background: var(--paused-color);
+}
+
+/* Add a small indicator at the top-right */
+.timer-button::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: 1.75rem;
+  right: 1.75rem;
+  background: transparent;
+  border-radius: 50%;
+  opacity: 0;
+  transition: all var(--transition-speed) ease;
+}
+
+.timer-button.active::after {
+  opacity: 1;
+  background: white;
+}
+
+.timer-button.paused::after {
+  opacity: 1;
+  background: var(--paused-color);
+}
+
+/* Media query for iPad and similar devices */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .timer-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  
+  .timer-button {
+    height: 220px;
+  }
+  
+  h1 {
+    font-size: 1.75rem;
+  }
+}
+
+/* Landscape mode */
+@media (orientation: landscape) {
+  .app-container {
+    height: 100vh;
+  }
+  
+  .timer-grid {
+    overflow-y: auto;
+    padding-bottom: 2rem;
+  }
+}
+
+/* Additional ACCE-inspired styles */
+.app-container::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: var(--primary-color);
+  z-index: 100;
+}
+
+/* Footer area */
+.export-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+  padding: 0 1rem;
+}
+
+.edit-icon {
+  position: absolute;
+  top: 1.75rem;
+  right: 1.75rem;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition-speed) ease;
+  cursor: pointer;
+  z-index: 2;
+  color: var(--secondary-color);
+}
+
+.timer-button:hover .edit-icon {
+  opacity: 0.7;
+}
+
+.timer-button.active .edit-icon {
+  color: white;
+}
+
+.edit-icon:hover {
+  opacity: 1 !important;
+}
+
+.add-button {
+  background-color: var(--idle-color);
+  border-style: dashed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--secondary-color);
+}
+
+.add-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.add-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+.export-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+}
+
+.export-button:hover {
+  background-color: #333;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0;
+  min-width: 300px;
+  max-width: 500px;
+  width: 90%;
+  border-top: 4px solid var(--primary-color);
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  color: var(--primary-color);
+  font-size: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  color: var(--secondary-color);
+}
+
+.form-group input[type="text"] {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  font-family: inherit;
+}
+
+.time-inputs {
+  display: flex;
+  flex-direction: column;
+}
+
+.time-input-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.time-input {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.time-input input {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  font-family: inherit;
+}
+
+.time-input span {
+  margin-left: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--secondary-color);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.modal-actions button {
+  padding: 0.75rem 1.25rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  border: none;
+  text-transform: uppercase;
+  transition: all var(--transition-speed) ease;
+}
+
+.btn-cancel {
+  background-color: transparent;
+  color: var(--secondary-color);
+  border: 1px solid var(--border-color) !important;
+}
+
+.btn-save {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-archive {
+  margin-right: auto;
+  background-color: transparent;
+  color: #999;
+  text-decoration: underline;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.btn-cancel:hover {
+  border-color: var(--secondary-color) !important;
+}
+
+.btn-save:hover {
+  background-color: #333;
+}
+
+.btn-archive:hover {
+  color: #666;
+}
+
+.footer {
+  margin-top: 3rem;
+  padding: 1.5rem 0;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.8rem;
+  color: var(--light-text);
+  letter-spacing: 0.05em;
+}
