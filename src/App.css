@@ -173,12 +173,18 @@ h1 {
 }
 
 .timer-content {
-  padding: 1.75rem;
+  padding: 1.25rem;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+}
+
+@media (min-width: 1025px) {
+  .timer-content {
+    padding: 1rem;
+  }
 }
 
 .job-info {
@@ -249,12 +255,19 @@ h1 {
   position: absolute;
   width: 8px;
   height: 8px;
-  top: 1.75rem;
-  right: 1.75rem;
+  top: 1.25rem;
+  right: 1.25rem;
   background: transparent;
   border-radius: 50%;
   opacity: 0;
   transition: all var(--transition-speed) ease;
+}
+
+@media (min-width: 1025px) {
+  .timer-button::after {
+    top: 1rem;
+    right: 1rem;
+  }
 }
 
 .timer-button.active::after {
@@ -267,7 +280,7 @@ h1 {
   background: var(--paused-color);
 }
 
-/* Media query for iPad and similar devices */
+/* Media queries for responsive grid */
 @media (min-width: 768px) and (max-width: 1024px) {
   .timer-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -275,11 +288,33 @@ h1 {
   }
   
   .timer-button {
-    height: 220px;
+    height: 200px;
   }
   
   h1 {
     font-size: 1.75rem;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1400px) {
+  .timer-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.8rem;
+  }
+  
+  .timer-button {
+    height: 180px;
+  }
+}
+
+@media (min-width: 1401px) {
+  .timer-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.8rem;
+  }
+  
+  .timer-button {
+    height: 170px;
   }
 }
 
@@ -312,8 +347,8 @@ h1 {
 
 .edit-icon {
   position: absolute;
-  top: 1.75rem;
-  right: 1.75rem;
+  top: 1.25rem;
+  right: 1.25rem;
   width: 24px;
   height: 24px;
   display: flex;
@@ -324,6 +359,13 @@ h1 {
   cursor: pointer;
   z-index: 2;
   color: var(--secondary-color);
+}
+
+@media (min-width: 1025px) {
+  .edit-icon {
+    top: 1rem;
+    right: 1rem;
+  }
 }
 
 .timer-button:hover .edit-icon {
