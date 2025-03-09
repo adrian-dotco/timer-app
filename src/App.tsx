@@ -442,7 +442,10 @@ function App() {
       
       
       <div className="footer">
-        <div>&copy; {new Date().getFullYear()} Timer App</div>
+        <div className="footer-content">
+          <div>&copy; {new Date().getFullYear()} Timer App</div>
+          <div className="version">v1.0.0</div>
+        </div>
       </div>
       
       {/* Edit Modal */}
