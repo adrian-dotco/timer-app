@@ -133,10 +133,12 @@ h1 {
 
 .timer-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
+  /* Fixed gap for consistent spacing */
+  gap: 16px;
   flex: 1;
   padding: 0 1rem;
+  /* Default to 2 columns on smallest screens */
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .timer-button {
@@ -280,26 +282,33 @@ h1 {
   background: var(--paused-color);
 }
 
-/* Media queries for responsive grid */
-@media (min-width: 768px) and (max-width: 1024px) {
+/* Media queries for fixed grid with consistent spacing */
+@media (min-width: 640px) {
   .timer-grid {
+    /* 3 columns on small tablets */
     grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
+  }
+}
+
+@media (min-width: 900px) {
+  .timer-grid {
+    /* 4 columns on tablets/small desktops */
+    grid-template-columns: repeat(4, 1fr);
   }
   
   .timer-button {
-    height: 200px;
+    height: 190px;
   }
-  
+
   h1 {
     font-size: 1.75rem;
   }
 }
 
-@media (min-width: 1025px) and (max-width: 1400px) {
+@media (min-width: 1200px) {
   .timer-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.8rem;
+    /* 5 columns on medium desktops */
+    grid-template-columns: repeat(5, 1fr);
   }
   
   .timer-button {
@@ -307,10 +316,10 @@ h1 {
   }
 }
 
-@media (min-width: 1401px) {
+@media (min-width: 1500px) {
   .timer-grid {
-    grid-template-columns: repeat(5, 1fr);
-    gap: 0.8rem;
+    /* 6 columns on large desktops */
+    grid-template-columns: repeat(6, 1fr);
   }
   
   .timer-button {
