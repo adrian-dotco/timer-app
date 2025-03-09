@@ -354,7 +354,7 @@ h1 {
 /* Footer area */
 /* Export section moved to header */
 
-.edit-icon {
+.edit-icon, .restore-icon {
   position: absolute;
   top: 1.25rem;
   right: 1.25rem;
@@ -371,13 +371,14 @@ h1 {
 }
 
 @media (min-width: 1025px) {
-  .edit-icon {
+  .edit-icon, .restore-icon {
     top: 1rem;
     right: 1rem;
   }
 }
 
-.timer-button:hover .edit-icon {
+.timer-button:hover .edit-icon,
+.timer-button:hover .restore-icon {
   opacity: 0.7;
 }
 
@@ -385,8 +386,20 @@ h1 {
   color: white;
 }
 
-.edit-icon:hover {
+.edit-icon:hover,
+.restore-icon:hover {
   opacity: 1 !important;
+}
+
+.restore-icon {
+  opacity: 0.5;
+}
+
+.archived-timer {
+  opacity: 0.85;
+  background-color: var(--idle-color) !important;
+  border-color: var(--border-color) !important;
+  color: var(--secondary-color) !important;
 }
 
 .add-button {
@@ -428,6 +441,21 @@ h1 {
 
 .export-button:hover {
   background-color: #333;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--light-text);
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+}
+
+.active-view {
+  background-color: var(--secondary-color) !important;
+  color: white !important;
+  border-color: var(--secondary-color) !important;
 }
 
 /* Modal Styles */
@@ -565,8 +593,8 @@ h1 {
 
 .footer {
   margin-top: 2rem;
-  padding: 0.75rem 0;
-  text-align: center;
+  padding: 0.75rem 1rem;
+  text-align: left;
   border-top: 1px solid var(--border-color);
   font-size: 0.75rem;
   color: var(--light-text);
@@ -575,7 +603,7 @@ h1 {
 
 .footer-content {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 0.5rem;
 }

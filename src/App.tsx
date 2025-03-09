@@ -147,6 +147,7 @@ function App() {
   const [currentDateTime, setCurrentDateTime] = useState<Date>(new Date());
   const [editingTimer, setEditingTimer] = useState<TimerButton | null>(null);
   const [isNewTimer, setIsNewTimer] = useState(false);
+  const [showArchive, setShowArchive] = useState(false);
   const longPressRef = useRef<NodeJS.Timeout | null>(null);
   const longPressTimerIdRef = useRef<number | null>(null);
 
@@ -291,7 +292,7 @@ function App() {
     setEditingTimer(null);
   };
   
-  // Clear all timers 
+  // Clear all timers with confirmation
   const clearAllTimers = () => {
     if (window.confirm('Are you sure you want to clear all timers? This action cannot be undone.')) {
       setButtons(prev => prev.map(button => ({
@@ -301,6 +302,20 @@ function App() {
         startTime: undefined
       })));
     }
+  };
+  
+  // Restore a timer from archive
+  const restoreTimer = (id: number) => {
+    setButtons(prev => 
+      prev.map(button => 
+        button.id === id ? { ...button, archived: false } : button
+      )
+    );
+  };
+  
+  // Toggle archive view
+  const toggleArchiveView = () => {
+    setShowArchive(prev => !prev);
   };
   
   // Format date to YYYY-MM-DD
@@ -375,8 +390,10 @@ function App() {
     document.body.removeChild(link);
   };
 
-  // Get non-archived timers
-  const activeButtons = buttons.filter(button => !button.archived);
+  // Get buttons based on current view
+  const filteredButtons = showArchive 
+    ? buttons.filter(button => button.archived)
+    : buttons.filter(button => !button.archived);
 
   return (
     <div className="app-container">
@@ -391,30 +408,59 @@ function App() {
           </div>
         </div>
         <div className="header-actions">
-          <button className="header-button clear-button" onClick={clearAllTimers}>
-            Clear All Timers
+          <button 
+            className={`header-button ${showArchive ? 'active-view' : ''}`} 
+            onClick={toggleArchiveView}
+          >
+            {showArchive ? 'Back to Timers' : 'View Archive'}
           </button>
-          <button className="header-button export-button" onClick={exportToCSV}>
-            Export to CSV
-          </button>
+          {!showArchive && (
+            <>
+              <button className="header-button clear-button" onClick={clearAllTimers}>
+                Clear All Timers
+              </button>
+              <button className="header-button export-button" onClick={exportToCSV}>
+                Export to CSV
+              </button>
+            </>
+          )}
         </div>
       </header>
       <div className="timer-grid">
-        {activeButtons.map(button => (
+        {filteredButtons.length === 0 && (
+          <div className="empty-state">
+            {showArchive ? 
+              'No archived timers found.' : 
+              'No active timers. Click "Add New Job" to create one.'}
+          </div>
+        )}
+        
+        {filteredButtons.map(button => (
           <button 
             key={button.id}
-            className={`timer-button ${button.isActive ? 'active' : ''} ${button.elapsedTime > 0 && !button.isActive ? 'paused' : ''}`}
-            onClick={() => toggleTimer(button.id)}
-            onTouchStart={() => handleTouchStart(button.id)}
-            onTouchEnd={handleTouchEnd}
-            onTouchCancel={handleTouchEnd}
+            className={`timer-button ${button.isActive ? 'active' : ''} ${button.elapsedTime > 0 && !button.isActive ? 'paused' : ''} ${showArchive ? 'archived-timer' : ''}`}
+            onClick={showArchive ? () => {} : () => toggleTimer(button.id)}
+            onTouchStart={showArchive ? undefined : () => handleTouchStart(button.id)}
+            onTouchEnd={showArchive ? undefined : handleTouchEnd}
+            onTouchCancel={showArchive ? undefined : handleTouchEnd}
           >
-            <div className="edit-icon" onClick={(e) => handleEditClick(e, button.id)}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16.4745 5.40801L18.5917 7.52524M17.8358 3.54289L11.6003 9.77846C11.3263 10.0525 11.1361 10.4012 11.0592 10.7785L10.5 14L13.7215 13.4408C14.0988 13.3639 14.4475 13.1737 14.7215 12.8997L20.9571 6.66417C21.281 6.34022 21.462 5.90021 21.462 5.44289C21.462 4.98557 21.281 4.54556 20.9571 4.22161C20.6331 3.89767 20.1931 3.71667 19.7358 3.71667C19.2785 3.71667 18.8385 3.89767 18.5145 4.22161L17.8358 3.54289Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M19 15V18C19 18.5304 18.7893 19.0391 18.4142 19.4142C18.0391 19.7893 17.5304 20 17 20H6C5.46957 20 4.96086 19.7893 4.58579 19.4142C4.21071 19.0391 4 18.5304 4 18V7C4 6.46957 4.21071 5.96086 4.58579 5.58579C4.96086 5.21071 5.46957 5 6 5H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
+            {showArchive ? (
+              <div className="restore-icon" onClick={() => restoreTimer(button.id)}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 4V9H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M20 20V15H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M16.5 7.5C15.3739 6.54061 13.9457 6.00044 12.4611 6.00044C10.9765 6.00044 9.54838 6.54061 8.42225 7.5M7.5 16.5C8.62613 17.4594 10.0543 17.9996 11.5389 17.9996C13.0235 17.9996 14.4516 17.4594 15.5777 16.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M4 4L9 9M20 20L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            ) : (
+              <div className="edit-icon" onClick={(e) => handleEditClick(e, button.id)}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16.4745 5.40801L18.5917 7.52524M17.8358 3.54289L11.6003 9.77846C11.3263 10.0525 11.1361 10.4012 11.0592 10.7785L10.5 14L13.7215 13.4408C14.0988 13.3639 14.4475 13.1737 14.7215 12.8997L20.9571 6.66417C21.281 6.34022 21.462 5.90021 21.462 5.44289C21.462 4.98557 21.281 4.54556 20.9571 4.22161C20.6331 3.89767 20.1931 3.71667 19.7358 3.71667C19.2785 3.71667 18.8385 3.89767 18.5145 4.22161L17.8358 3.54289Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M19 15V18C19 18.5304 18.7893 19.0391 18.4142 19.4142C18.0391 19.7893 17.5304 20 17 20H6C5.46957 20 4.96086 19.7893 4.58579 19.4142C4.21071 19.0391 4 18.5304 4 18V7C4 6.46957 4.21071 5.96086 4.58579 5.58579C4.96086 5.21071 5.46957 5 6 5H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            )}
             <div className="timer-content">
               <div className="job-info">
                 <div className="job-number">{button.jobNumber}</div>
@@ -428,18 +474,19 @@ function App() {
           </button>
         ))}
         
-        {/* Add button */}
-        <button 
-          className="timer-button add-button"
-          onClick={handleAddTimer}
-        >
-          <div className="timer-content add-content">
-            <div className="add-icon">+</div>
-            <div>Add New Job</div>
-          </div>
-        </button>
+        {/* Only show add button in non-archive view */}
+        {!showArchive && (
+          <button 
+            className="timer-button add-button"
+            onClick={handleAddTimer}
+          >
+            <div className="timer-content add-content">
+              <div className="add-icon">+</div>
+              <div>Add New Job</div>
+            </div>
+          </button>
+        )}
       </div>
-      
       
       <div className="footer">
         <div className="footer-content">
