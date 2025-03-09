@@ -381,17 +381,24 @@ function App() {
   return (
     <div className="app-container">
       <header>
-        <div className="date-time-display">
-          <div className="current-date">{formatDisplayDate(currentDateTime)}</div>
-          <div className="current-time">{formatDisplayTime(currentDateTime)}</div>
+        <div className="header-left">
+          <div className="header-title">
+            <h1>Job Timer</h1>
+          </div>
+          <div className="date-time-display">
+            <div className="current-date">{formatDisplayDate(currentDateTime)}</div>
+            <div className="current-time">{formatDisplayTime(currentDateTime)}</div>
+          </div>
         </div>
-        <h1>Job Timer</h1>
+        <div className="header-actions">
+          <button className="header-button clear-button" onClick={clearAllTimers}>
+            Clear All Timers
+          </button>
+          <button className="header-button export-button" onClick={exportToCSV}>
+            Export to CSV
+          </button>
+        </div>
       </header>
-      <div className="controls">
-        <button className="control-button clear-button" onClick={clearAllTimers}>
-          Clear All Timers
-        </button>
-      </div>
       <div className="timer-grid">
         {activeButtons.map(button => (
           <button 
@@ -433,11 +440,6 @@ function App() {
         </button>
       </div>
       
-      <div className="export-section">
-        <button className="export-button" onClick={exportToCSV}>
-          Export to WorkflowMax CSV
-        </button>
-      </div>
       
       <div className="footer">
         <div>&copy; {new Date().getFullYear()} Timer App</div>

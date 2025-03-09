@@ -41,70 +41,94 @@ body {
 }
 
 header {
-  padding: 2.5rem 0 2.5rem;
-  text-align: center;
+  padding: 1.25rem 1rem;
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
   position: relative;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.header-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
 }
 
 .date-time-display {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin-bottom: 1.5rem;
 }
 
 .current-date {
   font-weight: 300;
-  font-size: 0.95rem;
-  letter-spacing: 0.05em;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
   color: var(--secondary-color);
 }
 
 .current-time {
   font-weight: 400;
-  font-size: 1.1rem;
-  letter-spacing: 0.05em;
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
   color: var(--primary-color);
-  margin-top: 0.25rem;
 }
 
 h1 {
   font-weight: 300;
-  font-size: 2rem;
+  font-size: 1.6rem;
   color: var(--primary-color);
   margin: 0;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.controls {
+.header-actions {
   display: flex;
-  justify-content: flex-end;
-  padding: 0 1rem;
-  margin-bottom: 1.5rem;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-.control-button {
+.header-button {
   background: white;
   border: 1px solid var(--border-color);
   padding: 0.5rem 1rem;
   font-family: inherit;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
   transition: all var(--transition-speed) ease;
+  white-space: nowrap;
 }
 
 .clear-button {
   color: #999;
 }
 
-.control-button:hover {
+.header-button:hover {
   border-color: var(--secondary-color);
   color: var(--primary-color);
+}
+
+.export-button.header-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.export-button.header-button:hover {
+  background-color: #333;
 }
 
 .timer-grid {
@@ -284,12 +308,7 @@ h1 {
 }
 
 /* Footer area */
-.export-section {
-  display: flex;
-  justify-content: center;
-  margin-top: 2.5rem;
-  padding: 0 1rem;
-}
+/* Export section moved to header */
 
 .edit-icon {
   position: absolute;
