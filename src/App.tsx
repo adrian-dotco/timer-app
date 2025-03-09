@@ -343,10 +343,12 @@ function App() {
   
   // Export timer data as CSV for WorkflowMax
   const exportToCSV = () => {
-    // Filter out timers with zero time and archived timers
-    const activeTimers = buttons.filter(button => button.elapsedTime > 0 && !button.archived);
+    // Filter timers based on current view and with time > 0
+    const timersToExport = showArchive 
+      ? buttons.filter(button => button.elapsedTime > 0 && button.archived)
+      : buttons.filter(button => button.elapsedTime > 0 && !button.archived);
     
-    if (activeTimers.length === 0) {
+    if (timersToExport.length === 0) {
       alert('No timer data to export!');
       return;
     }
@@ -360,14 +362,14 @@ function App() {
     const today = formatDate(new Date());
     
     // Create CSV headers according to WorkflowMax format
-    const headers = ['Staff', 'Date', 'Job', 'Task', 'Description', 'Hours'];
+    const headers = ['Staff', 'Date', 'Job Number', 'Job Name', 'Task', 'Description', 'Hours'];
     
-    // Create rows data - using assumed WorkflowMax format
-    // Modify this according to actual WorkflowMax requirements
-    const rows = activeTimers.map(timer => {
+    // Create rows data with job number and job name
+    const rows = timersToExport.map(timer => {
       return [
         'User', // Placeholder for staff name
         today,
+        timer.jobNumber,
         timer.name,
         'Standard', // Default task type 
         `Time tracked on ${today}`,
@@ -414,15 +416,13 @@ function App() {
           >
             {showArchive ? 'Back to Timers' : 'View Archive'}
           </button>
+          <button className="header-button export-button" onClick={exportToCSV}>
+            Export {showArchive ? 'Archive' : 'Timers'} to CSV
+          </button>
           {!showArchive && (
-            <>
-              <button className="header-button clear-button" onClick={clearAllTimers}>
-                Clear All Timers
-              </button>
-              <button className="header-button export-button" onClick={exportToCSV}>
-                Export to CSV
-              </button>
-            </>
+            <button className="header-button clear-button" onClick={clearAllTimers}>
+              Clear All Timers
+            </button>
           )}
         </div>
       </header>
