@@ -151,18 +151,48 @@ function App() {
   const longPressRef = useRef<NodeJS.Timeout | null>(null);
   const longPressTimerIdRef = useRef<number | null>(null);
 
-  // Initialize with a few sample buttons
+  // Initialize from localStorage or with defaults
   useEffect(() => {
-    const initialButtons = Array.from({ length: 5 }, (_, i) => ({
-      id: i + 1,
-      name: `Job ${i + 1}`,
-      jobNumber: `J${1000 + i}`,
-      elapsedTime: 0,
-      isActive: false,
-      archived: false
-    }));
-    setButtons(initialButtons);
+    const savedButtons = localStorage.getItem('timerButtons');
+    const savedDate = localStorage.getItem('lastSaveDate');
+    
+    if (savedButtons && savedDate) {
+      // Check if the saved data is from today (to avoid carrying over old active timers)
+      const today = new Date().toDateString();
+      const lastSaveDay = new Date(savedDate).toDateString();
+      
+      const parsedButtons = JSON.parse(savedButtons);
+      
+      // If it's a different day, make sure no timers are active
+      if (today !== lastSaveDay) {
+        setButtons(parsedButtons.map((button: TimerButton) => ({
+          ...button,
+          isActive: false
+        })));
+      } else {
+        setButtons(parsedButtons);
+      }
+    } else {
+      // Set default buttons if no saved data
+      const initialButtons = Array.from({ length: 5 }, (_, i) => ({
+        id: i + 1,
+        name: `Job ${i + 1}`,
+        jobNumber: `J${1000 + i}`,
+        elapsedTime: 0,
+        isActive: false,
+        archived: false
+      }));
+      setButtons(initialButtons);
+    }
   }, []);
+  
+  // Save to localStorage whenever buttons state changes
+  useEffect(() => {
+    if (buttons.length > 0) {
+      localStorage.setItem('timerButtons', JSON.stringify(buttons));
+      localStorage.setItem('lastSaveDate', new Date().toISOString());
+    }
+  }, [buttons]);
   
   // Update the current date and time every minute
   useEffect(() => {
@@ -401,9 +431,6 @@ function App() {
     <div className="app-container">
       <header>
         <div className="header-left">
-          <div className="header-title">
-            <h1>Job Timer</h1>
-          </div>
           <div className="date-time-display">
             <div className="current-date">{formatDisplayDate(currentDateTime)}</div>
             <div className="current-time">{formatDisplayTime(currentDateTime)}</div>
@@ -416,14 +443,14 @@ function App() {
           >
             {showArchive ? 'Back to Timers' : 'View Archive'}
           </button>
-          <button className="header-button export-button" onClick={exportToCSV}>
-            Export {showArchive ? 'Archive' : 'Timers'} to CSV
-          </button>
           {!showArchive && (
             <button className="header-button clear-button" onClick={clearAllTimers}>
               Clear All Timers
             </button>
           )}
+          <button className="header-button export-button" onClick={exportToCSV}>
+            Export {showArchive ? 'Archive' : 'Timers'} to CSV
+          </button>
         </div>
       </header>
       <div className="timer-grid">
